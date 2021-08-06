@@ -89,5 +89,258 @@ names(data.AMZN) <-
 paste(c("AMZN.Open","AMZN.High","AMZN.Low","AMZN.Close","AMZN.Adjusted","AMZN.Volume"))
 
 data.AMZN[c(1:3,nrow(data.AMZN)),]
+
+
+```
+Plotting the data for each security to check for missing data
+```{r sec2}
+summary(data.JPM)
+plot(data.JPM$JPM.Close)
+
+summary(data.GS)
+plot(data.GS$GS.Close)
+
+summary(data.AES)
+plot(data.AES$AES.Close)
+
+summary(data.DTE)
+plot(data.DTE$DTE.Close)
+
+summary(data.AAPL)
+plot(data.AAPL$AAPL.Close)
+
+summary(data.AMZN)
+plot(data.AMZN$AMZN.Close)
+
 ```
 
+
+
+Plot candlestick charts for each stocks using weeklty data
+
+```{r candlestick }
+library(quantmod)
+
+
+wk.JPM <- data.JPM
+data.weekly.JPM <- to.weekly(wk.JPM)
+data.weekly.JPM[c(1:3,nrow(data.weekly.JPM)),]
+
+OHLC <- data.weekly.JPM[-1,-6]
+JPM.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+JPM.ohlc[c(1:3,nrow(JPM.ohlc)),]
+
+chartSeries(JPM.ohlc,theme="white.mono",name="JPM OHLC")
+
+
+wk.GS <- data.GS
+data.weekly.GS <- to.weekly(wk.GS)
+data.weekly.GS[c(1:3,nrow(data.weekly.GS)),]
+
+OHLC <- data.weekly.GS[-1,-6]
+GS.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+GS.ohlc[c(1:3,nrow(GS.ohlc)),]
+
+chartSeries(GS.ohlc,theme="white.mono",name="GS OHLC")
+
+wk.AES <- data.AES
+data.weekly.AES <- to.weekly(wk.AES)
+data.weekly.AES[c(1:3,nrow(data.weekly.AES)),]
+
+OHLC <- data.weekly.AES[-1,-6]
+AES.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+AES.ohlc[c(1:3,nrow(AES.ohlc)),]
+
+chartSeries(AES.ohlc,theme="white.mono",name="AES OHLC")
+
+wk.DTE <- data.DTE
+data.weekly.DTE <- to.weekly(wk.DTE)
+data.weekly.DTE[c(1:3,nrow(data.weekly.DTE)),]
+
+OHLC <- data.weekly.DTE[-1,-6]
+DTE.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+DTE.ohlc[c(1:3,nrow(DTE.ohlc)),]
+
+chartSeries(DTE.ohlc,theme="white.mono",name="DTE OHLC")
+
+wk.AMZN <- data.AMZN
+data.weekly.AMZN <- to.weekly(wk.AMZN)
+data.weekly.AMZN[c(1:3,nrow(data.weekly.AMZN)),]
+
+OHLC <- data.weekly.AMZN[-1,-6]
+AMZN.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+AMZN.ohlc[c(1:3,nrow(AMZN.ohlc)),]
+
+chartSeries(AMZN.ohlc,theme="white.mono",name="AMZN OHLC")
+
+
+wk.AAPL <- data.AAPL
+data.weekly.AAPL <- to.weekly(wk.AAPL)
+data.weekly.AAPL[c(1:3,nrow(data.weekly.AAPL)),]
+
+OHLC <- data.weekly.AAPL[-1,-6]
+AAPL.ohlc <-
+as.quantmod.OHLC(OHLC,col.names=c("Open","High","Low","Close","Volume"))
+AAPL.ohlc[c(1:3,nrow(AAPL.ohlc)),]
+
+chartSeries(AAPL.ohlc,theme="white.mono",name="AAPL OHLC")
+
+
+
+
+
+
+
+```
+
+Checking the gains during the pandemic from July 2019 to July 2021 for each sector
+```{r sec4}
+
+JPM.Pandemic <- subset(data.JPM[,4], index(data.JPM) >= "2019-07-01" &index(data.JPM) < "2021-08-01")
+GS.Pandemic <- subset(data.GS[,4], index(data.GS) >= "2019-07-01" &index(data.GS) < "2021-08-01")
+AES.Pandemic <- subset(data.AES[,4], index(data.AES) >= "2019-07-01" &index(data.AES) < "2021-08-01")
+DTE.Pandemic <- subset(data.DTE[,4], index(data.DTE) >= "2019-07-01" &index(data.DTE) < "2021-08-01")
+AAPL.Pandemic <- subset(data.AAPL[,4], index(data.AAPL) >= "2019-07-01" &index(data.AAPL) < "2021-08-01")
+AMZN.Pandemic <- subset(data.AMZN[,4], index(data.AMZN) >= "2019-07-01" &index(data.AMZN) < "2021-08-01")
+
+
+#closing price data of all tickers
+
+All.Close.Prices<-
+cbind(JPM.Pandemic$JPM.Close,GS.Pandemic$GS.Close,AES.Pandemic$AES.Close,DTE.Pandemic$DTE.Close,AAPL.Pandemic$AAPL.Close,AMZN.Pandemic$AMZN.Close)
+All.Close.Prices[c(1:3,nrow(All.Close.Prices)),]
+
+#renaming the columns in dataframe
+All.df<-cbind(index(All.Close.Prices),data.frame(All.Close.Prices))
+ncol(All.df)
+## [1] 7
+names(All.df) <- paste(c("date","JPM","GS","AES","DTE", "AAPL", "AMZN"))
+rownames(All.df) <- seq(1,nrow(All.df),1)
+All.df[c(1:3,nrow(All.df)),]
+
+All.df$Finance.idx <-(All.df$JPM+All.df$GS)/(All.df$GS[1]+All.df$JPM[1])
+head(All.df$Finance.idx)
+
+All.df$Utility.idx <-(All.df$AES+All.df$DTE)/(All.df$AES[1]+All.df$DTE[1])
+head(All.df$Utility.idx)
+
+All.df$Tech.idx <-(All.df$AAPL+All.df$AMZN)/(All.df$AAPL[1]+All.df$AMZN[1])
+head(All.df$Tech.idx)
+options(digits=5)
+
+
+plot(x=All.df$date,y=All.df$Finance.idx,type="l",xlab="Date", ylab="Value of Investment ($)",ylim=c(0.2,2) ,col="blue",lty=1,lwd=1,
+main="Value of $1 Investment in Financial, Utility and Tech sector 
+between July 1st 2019 - July 31st 2021") 
+lines(x=All.df$date, y=All.df$Utility.idx,col="red",lty=2,lwd=1)
+lines(x=All.df$date,y=All.df$Tech.idx, col="green",lty=3,lwd=2)
+abline(h=1,lty=1,col="black")
+legend("topleft",c("Finance( JPM, GS)","Utility(DTE,AES)","Tech(AAPL,AMZN)"),col=c("blue","red","green"),lty=c(1,2,3),lwd=c(1
+,1,1), box.lty = 0, cex =0.7)
+
+```
+
+Creating moving average for each sector
+
+```{r movingAverage}
+library(TTR)
+library(RcppParallel)
+library(zoo)
+JPM.sma<-data.JPM[,4]
+GS.sma<-data.GS[,4]
+Finance.sma<-JPM.sma+GS.sma
+Finance.sma$sma50<-rollmeanr(Finance.sma$JPM.Close,k=50,fill=NA)
+Finance.sma$sma200 <- rollmeanr(Finance.sma$JPM.Close,k=200, fill=NA)
+Finance.smaPandemic<-subset(Finance.sma,index(Finance.sma)>="2019-07-01")
+y.range <- range(Finance.sma,na.rm=TRUE)
+Finance.smaPandemic[c(1:3,nrow(Finance.smaPandemic)),]
+
+par(mfrow=c(1,1))
+plot(x=index(Finance.smaPandemic),xlab = "Date",
+y=Finance.smaPandemic$JPM.Close,ylim=y.range,col="red",lty=1,ylab="Price($)",type=
+"l",
+  main="Simple Moving Average for Finance sector July 2019 to July 2021")
+lines(x=index(Finance.smaPandemic),y=Finance.smaPandemic$sma50,lty=2,col="Blue")
+lines(x=index(Finance.smaPandemic),y=Finance.smaPandemic$sma200,lty=3, col ="Green")
+legend("topleft",c("Finance","50-day moving average","200-day moving
+average"),col=c("red","blue","Green"),lty=c(1,2,3))
+
+AES.sma<-data.AES[,4]
+DTE.sma<-data.DTE[,4]
+Utility.sma<-AES.sma+DTE.sma
+Utility.sma$sma50<-rollmeanr(Utility.sma$AES.Close,k=50,fill=NA)
+Utility.sma$sma200 <- rollmeanr(Utility.sma$AES.Close,k=200, fill=NA)
+Utility.smaPandemic<-subset(Utility.sma,index(Utility.sma)>="2019-07-01")
+y.range <- range(Utility.sma,na.rm=TRUE)
+Utility.smaPandemic[c(1:3,nrow(Utility.smaPandemic)),]
+
+par(mfrow=c(1,1))
+plot(x=index(Utility.smaPandemic),xlab = "Date",
+y=Utility.smaPandemic$AES.Close,ylim=y.range,col="red",lty=1,ylab="Price($)",type=
+"l",
+  main="Simple Moving Average for Utility sector July 2019 to July 2021")
+lines(x=index(Utility.smaPandemic),y=Utility.smaPandemic$sma50,lty=2,col="Blue")
+lines(x=index(Utility.smaPandemic),y=Utility.smaPandemic$sma200,lty=3, col ="Green")
+legend("bottomright",c("Utility","50-day moving average","200-day moving
+average"),col=c("red","blue","Green"),lty=c(1,2,3))
+
+
+AMZN.sma<-data.AMZN[,4]
+AAPL.sma<-data.AAPL[,4]
+Tech.sma<-AMZN.sma+AAPL.sma
+Tech.sma$sma50<-rollmeanr(Tech.sma$AMZN.Close,k=50,fill=NA)
+Tech.sma$sma200 <- rollmeanr(Tech.sma$AMZN.Close,k=200, fill=NA)
+Tech.smaPandemic<-subset(Tech.sma,index(Tech.sma)>="2019-07-01")
+y.range <- range(Tech.sma,na.rm=TRUE)
+Tech.smaPandemic[c(1:3,nrow(Tech.smaPandemic)),]
+
+par(mfrow=c(1,1))
+plot(x=index(Tech.smaPandemic),xlab = "Date",
+y=Tech.smaPandemic$AMZN.Close,ylim=y.range,col="red",lty=1,ylab="Price($)",type=
+"l",
+  main="Simple Moving Average for Tech sector July 2019 to July 2021")
+lines(x=index(Tech.smaPandemic),y=Tech.smaPandemic$sma50,lty=2,col="Blue")
+lines(x=index(Tech.smaPandemic),y=Tech.smaPandemic$sma200,lty=3, col ="Green")
+legend("bottomright",c("Tech","50-day moving average","200-day moving
+average"),col=c("red","blue","Green"),lty=c(1,2,3))
+```
+
+Bollinger BandsPlot for Pandemic Period
+```{r sec 6}
+
+
+JPM.bb<-JPM.Pandemic
+GS.bb<-GS.Pandemic
+DTE.bb<-DTE.Pandemic
+AES.bb<-AES.Pandemic
+AAPL.bb<-AAPL.Pandemic
+AMZN.bb<-AMZN.Pandemic
+
+
+Portfolio.bb<- cbind(JPM.bb$JPM.Close,GS.bb$GS.Close,DTE.bb$DTE.Close,AES.bb$AES.Close,AAPL.bb$AAPL.Close,AMZN.bb$AMZN.Close)
+Portfolio.bb$all<- JPM.bb$JPM.Close+GS.bb$GS.Close+DTE.bb$DTE.Close+AES.bb$AES.Close+AAPL.bb$AAPL.Close+AMZN.bb$AMZN.Close
+Portfolio.bb[c(1:3,nrow(Portfolio.bb)),]
+Portfolio.bb$avg<-rollmeanr(Portfolio.bb$all,k=20)
+Portfolio.bb$sd<-rollapply(Portfolio.bb$all,width=20, FUN=sd, fill=NA)
+Portfolio.bb[c(1:3,nrow(Portfolio.bb)),]
+Portfolio.bb$sd2up<-Portfolio.bb$avg+2*Portfolio.bb$sd
+Portfolio.bb$sd2down<-Portfolio.bb$avg-2*Portfolio.bb$sd
+Portfolio.bb[c(1:3,nrow(Portfolio.bb)),]
+
+
+y.range <- range(Portfolio.bb[,-9],na.rm=TRUE)
+plot(x=index(Portfolio.bb),xlab="Date",y=Portfolio.bb$all, col="pink",ylim =
+y.range,ylab = "Price ($)",type = "l",lwd=2,     main=" Portfolio - Bollinger Bands (20 days, 2 deviations)
+     July 1st 2019 - July  31,2021")
+lines(x=index(Portfolio.bb),y=Portfolio.bb$avg,lty=2,col="gray",lwd=3)
+lines(x=index(Portfolio.bb),y=Portfolio.bb$sd2up,col="blue")
+lines(x=index(Portfolio.bb),y=Portfolio.bb$sd2down,col="orange")
+legend("bottomright",c("Portfolio price","20-Day Moving Average","Upper
+Band","Lower Band"),lty=c(1,2,1,1),lwd=c(2,3,1,1),
+col=c("pink","gray","blue","orange"))
+```
