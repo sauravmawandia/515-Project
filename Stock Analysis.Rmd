@@ -11,32 +11,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Create the data files
 ```{r BAC,echo=FALSE, message=FALSE, warning=FALSE}
-data.GS <- read.csv("~/Documents/515/515-Project/data/GS.csv")
-data.JPM <- read.csv("~/Documents/515/515-Project/data/JPM.csv")
-data.DTE <- read.csv("~/Documents/515/515-Project/data/DTE.csv")
-data.AES <- read.csv("~/Documents/515/515-Project/data/AES.csv")
-data.AAPL <- read.csv("~/Documents/515/515-Project/data/AAPL.csv")
-data.AMZN <- read.csv("~/Documents/515/515-Project/data/AMZN.csv")
+GS <- read.csv("~/Documents/515/515-Project/data/GS.csv")
+JPM <- read.csv("~/Documents/515/515-Project/data/JPM.csv")
+DTE <- read.csv("~/Documents/515/515-Project/data/DTE.csv")
+AES <- read.csv("~/Documents/515/515-Project/data/AES.csv")
+AAPL <- read.csv("~/Documents/515/515-Project/data/AAPL.csv")
+AMZN <- read.csv("~/Documents/515/515-Project/data/AMZN.csv")
 
-library("xts")
+library(xts)
 library(quantmod)
+library(Rglpk)
 
-date <- as.Date(data.GS$Date , format = "%Y-%m-%d")
-data.GS <- cbind(date, data.GS[,-1])
-data.GS <- data.GS[order(data.GS$date),]
-data.GS <- xts(data.GS[,2:7],order.by=data.GS[,1])
 
+date <- as.Date(GS$Date , format = "%Y-%m-%d")
+GS <- cbind(date, GS[,-1])
+GS <- GS[order(GS$date),]
+data.GS <- xts(GS[,2:7],order.by=GS[,1])
 
 names(data.GS) <-
 paste(c("GS.Open","GS.High","GS.Low","GS.Close","GS.Adjusted","GS.Volume"))
 
-data.GS[c(1:3,nrow(data.GS)),]
+GS[c(1:3,nrow(GS)),]
 
 
-date <- as.Date(data.JPM$Date , format = "%Y-%m-%d")
-data.JPM <- cbind(date, data.JPM[,-1])
-data.JPM <- data.JPM[order(data.JPM$date),]
-data.JPM <- xts(data.JPM[,2:7],order.by=data.JPM[,1])
+date <- as.Date(JPM$Date , format = "%Y-%m-%d")
+JPM <- cbind(date, JPM[,-1])
+JPM <- JPM[order(JPM$date),]
+data.JPM <- xts(JPM[,2:7],order.by=JPM[,1])
 
 
 names(data.JPM) <-
@@ -44,10 +45,10 @@ paste(c("JPM.Open","JPM.High","JPM.Low","JPM.Close","JPM.Adjusted","JPM.Volume")
 
 data.JPM[c(1:3,nrow(data.JPM)),]
 
-date <- as.Date(data.AES$Date , format = "%Y-%m-%d")
-data.AES <- cbind(date, data.AES[,-1])
-data.AES <- data.AES[order(data.AES$date),]
-data.AES <- xts(data.AES[,2:7],order.by=data.AES[,1])
+date <- as.Date(AES$Date , format = "%Y-%m-%d")
+AES <- cbind(date, AES[,-1])
+AES <- AES[order(AES$date),]
+data.AES <- xts(AES[,2:7],order.by=AES[,1])
 
 
 names(data.AES) <-
@@ -56,10 +57,10 @@ paste(c("AES.Open","AES.High","AES.Low","AES.Close","AES.Adjusted","AES.Volume")
 data.AES[c(1:3,nrow(data.AES)),]
 
 
-date <- as.Date(data.DTE$Date , format = "%Y-%m-%d")
-data.DTE <- cbind(date, data.DTE[,-1])
-data.DTE <- data.DTE[order(data.DTE$date),]
-data.DTE <- xts(data.DTE[,2:7],order.by=data.DTE[,1])
+date <- as.Date(DTE$Date , format = "%Y-%m-%d")
+DTE <- cbind(date, DTE[,-1])
+DTE <- DTE[order(DTE$date),]
+data.DTE <- xts(DTE[,2:7],order.by=DTE[,1])
 
 
 names(data.DTE) <-
@@ -68,10 +69,10 @@ paste(c("DTE.Open","DTE.High","DTE.Low","DTE.Close","DTE.Adjusted","DTE.Volume")
 data.DTE[c(1:3,nrow(data.DTE)),]
 
 
-date <- as.Date(data.AAPL$Date , format = "%Y-%m-%d")
-data.AAPL <- cbind(date, data.AAPL[,-1])
-data.AAPL <- data.AAPL[order(data.AAPL$date),]
-data.AAPL <- xts(data.AAPL[,2:7],order.by=data.AAPL[,1])
+date <- as.Date(AAPL$Date , format = "%Y-%m-%d")
+AAPL <- cbind(date, AAPL[,-1])
+AAPL <- AAPL[order(AAPL$date),]
+data.AAPL <- xts(AAPL[,2:7],order.by=AAPL[,1])
 
 
 names(data.AAPL) <-
@@ -79,10 +80,10 @@ paste(c("AAPL.Open","AAPL.High","AAPL.Low","AAPL.Close","AAPL.Adjusted","AAPL.Vo
 
 data.AAPL[c(1:3,nrow(data.AAPL)),]
 
-date <- as.Date(data.AMZN$Date , format = "%Y-%m-%d")
-data.AMZN <- cbind(date, data.AMZN[,-1])
-data.AMZN <- data.AMZN[order(data.AMZN$date),]
-data.AMZN <- xts(data.AMZN[,2:7],order.by=data.AMZN[,1])
+date <- as.Date(AMZN$Date , format = "%Y-%m-%d")
+AMZN <- cbind(date, AMZN[,-1])
+AMZN <- AMZN[order(AMZN$date),]
+data.AMZN <- xts(AMZN[,2:7],order.by=AMZN[,1])
 
 
 names(data.AMZN) <-
@@ -98,7 +99,12 @@ data.DTE.Pandemic <- subset(data.DTE, index(data.DTE) >= "2019-07-01" &index(dat
 data.AAPL.Pandemic <- subset(data.AAPL, index(data.AAPL) >= "2019-07-01" &index(data.AAPL) < "2021-08-01")
 data.AMZN.Pandemic <- subset(data.AMZN, index(data.AMZN) >= "2019-07-01" &index(data.AMZN) < "2021-08-01")
 
-
+JPM.Pandemic <- subset(JPM, JPM$date >= "2019-07-01" & JPM$date < "2021-08-01")
+GS.Pandemic <- subset(GS, GS$date >= "2019-07-01" & GS$date < "2021-08-01")
+AES.Pandemic <- subset(AES, AES$date >= "2019-07-01" & AES$date < "2021-08-01")
+DTE.Pandemic <- subset(DTE, DTE$date >= "2019-07-01" & DTE$date < "2021-08-01")
+AAPL.Pandemic <- subset(AAPL, AAPL$date >= "2019-07-01" & AAPL$date < "2021-08-01")
+AMZN.Pandemic <- subset(AMZN, AMZN$date >= "2019-07-01" & AMZN$date < "2021-08-01")
 ```
 Plotting the data for each security to check for missing data
 ```{r sec2 , echo=FALSE, message=FALSE, warning=FALSE}
@@ -209,18 +215,18 @@ chartSeries(AAPL.ohlc,theme="white.mono",name="AAPL OHLC")
 Checking the gains during the pandemic from July 2019 to July 2021 for each sector
 ```{r sec4, echo=FALSE, message=FALSE, warning=FALSE}
 
-JPM.Pandemic <- subset(data.JPM[,4], index(data.JPM) >= "2019-07-01" &index(data.JPM) < "2021-08-01")
-GS.Pandemic <- subset(data.GS[,4], index(data.GS) >= "2019-07-01" &index(data.GS) < "2021-08-01")
-AES.Pandemic <- subset(data.AES[,4], index(data.AES) >= "2019-07-01" &index(data.AES) < "2021-08-01")
-DTE.Pandemic <- subset(data.DTE[,4], index(data.DTE) >= "2019-07-01" &index(data.DTE) < "2021-08-01")
-AAPL.Pandemic <- subset(data.AAPL[,4], index(data.AAPL) >= "2019-07-01" &index(data.AAPL) < "2021-08-01")
-AMZN.Pandemic <- subset(data.AMZN[,4], index(data.AMZN) >= "2019-07-01" &index(data.AMZN) < "2021-08-01")
+JPM.Pandemic1 <- subset(data.JPM[,4], index(data.JPM) >= "2019-07-01" &index(data.JPM) < "2021-08-01")
+GS.Pandemic1 <- subset(data.GS[,4], index(data.GS) >= "2019-07-01" &index(data.GS) < "2021-08-01")
+AES.Pandemic1 <- subset(data.AES[,4], index(data.AES) >= "2019-07-01" &index(data.AES) < "2021-08-01")
+DTE.Pandemic1 <- subset(data.DTE[,4], index(data.DTE) >= "2019-07-01" &index(data.DTE) < "2021-08-01")
+AAPL.Pandemic1 <- subset(data.AAPL[,4], index(data.AAPL) >= "2019-07-01" &index(data.AAPL) < "2021-08-01")
+AMZN.Pandemic1 <- subset(data.AMZN[,4], index(data.AMZN) >= "2019-07-01" &index(data.AMZN) < "2021-08-01")
 
 
 #closing price data of all tickers
 
 All.Close.Prices<-
-cbind(JPM.Pandemic$JPM.Close,GS.Pandemic$GS.Close,AES.Pandemic$AES.Close,DTE.Pandemic$DTE.Close,AAPL.Pandemic$AAPL.Close,AMZN.Pandemic$AMZN.Close)
+cbind(JPM.Pandemic1$JPM.Close,GS.Pandemic1$GS.Close,AES.Pandemic1$AES.Close,DTE.Pandemic1$DTE.Close,AAPL.Pandemic1$AAPL.Close,AMZN.Pandemic1$AMZN.Close)
 All.Close.Prices[c(1:3,nrow(All.Close.Prices)),]
 
 #renaming the columns in dataframe
@@ -322,12 +328,12 @@ Bollinger BandsPlot for Pandemic Period
 ```{r sec 6 , echo=FALSE, message=FALSE, warning=FALSE}
 
 
-JPM.bb<-JPM.Pandemic
-GS.bb<-GS.Pandemic
-DTE.bb<-DTE.Pandemic
-AES.bb<-AES.Pandemic
-AAPL.bb<-AAPL.Pandemic
-AMZN.bb<-AMZN.Pandemic
+JPM.bb<-JPM.Pandemic1
+GS.bb<-GS.Pandemic1
+DTE.bb<-DTE.Pandemic1
+AES.bb<-AES.Pandemic1
+AAPL.bb<-AAPL.Pandemic1
+AMZN.bb<-AMZN.Pandemic1
 
 
 Portfolio.bb<- cbind(JPM.bb$JPM.Close,GS.bb$GS.Close,DTE.bb$DTE.Close,AES.bb$AES.Close,AAPL.bb$AAPL.Close,AMZN.bb$AMZN.Close)
@@ -356,12 +362,12 @@ Portfolio return during the pandemic (Gross and Logarithmic)
 
 ```{r Portfolio price returns, echo=FALSE, message=FALSE, warning=FALSE}
 library(xts)
-multiPrice <- JPM.Pandemic
-multiPrice <- merge(multiPrice, GS.Pandemic)
-multiPrice <- merge(multiPrice, AES.Pandemic)
-multiPrice <- merge(multiPrice, DTE.Pandemic)
-multiPrice <- merge(multiPrice, AAPL.Pandemic)
-multiPrice <- merge(multiPrice, AMZN.Pandemic)
+multiPrice <- JPM.Pandemic1
+multiPrice <- merge(multiPrice, GS.Pandemic1)
+multiPrice <- merge(multiPrice, AES.Pandemic1)
+multiPrice <- merge(multiPrice, DTE.Pandemic1)
+multiPrice <- merge(multiPrice, AAPL.Pandemic1)
+multiPrice <- merge(multiPrice, AMZN.Pandemic1)
 
 
 library(quantmod)
@@ -448,7 +454,7 @@ ew.h1$DTE <-cumprod(ew.h1$DTE.Ret+1)
 ew.h1$AES <-cumprod(ew.h1$AES.Ret+1)
 ew.h1$AAPL <-cumprod(ew.h1$AAPL.Ret+1)
 ew.h1$AMZN <-cumprod(ew.h1$AMZN.Ret+1)
-ew.h1$EWPort<-(ew.h1$GS+ew.h1$JPM+ew.h1$AAPL+ew.h1$AMZN+ew.h1$DTE+ew.h1$AES)/4
+ew.h1$EWPort<-(ew.h1$GS+ew.h1$JPM+ew.h1$AAPL+ew.h1$AMZN+ew.h1$DTE+ew.h1$AES)/6
 ew.h1$EWRet<-rbind(ew.h1$EWPort[1]-1,Delt(ew.h1$EWPort)[-1,])
 
 #H2: EW Port value
@@ -463,7 +469,7 @@ ew.h2$DTE <-cumprod(ew.h2$DTE.Ret+1)
 ew.h2$AES <-cumprod(ew.h2$AES.Ret+1)
 ew.h2$AAPL <-cumprod(ew.h2$AAPL.Ret+1)
 ew.h2$AMZN <-cumprod(ew.h2$AMZN.Ret+1)
-ew.h2$EWPort<-(ew.h2$GS+ew.h2$JPM+ew.h2$AAPL+ew.h2$AMZN+ew.h2$DTE+ew.h2$AES)/4
+ew.h2$EWPort<-(ew.h2$GS+ew.h2$JPM+ew.h2$AAPL+ew.h2$AMZN+ew.h2$DTE+ew.h2$AES)/6
 
 ew.h2$EWRet<-rbind(ew.h2$EWPort[1]-1,Delt(ew.h2$EWPort)[-1,])
 
@@ -479,7 +485,7 @@ ew.h3$DTE <-cumprod(ew.h3$DTE.Ret+1)
 ew.h3$AES <-cumprod(ew.h3$AES.Ret+1)
 ew.h3$AAPL <-cumprod(ew.h3$AAPL.Ret+1)
 ew.h3$AMZN <-cumprod(ew.h3$AMZN.Ret+1)
-ew.h3$EWPort<-(ew.h3$GS+ew.h3$JPM+ew.h3$AAPL+ew.h3$AMZN+ew.h3$DTE+ew.h3$AES)/4
+ew.h3$EWPort<-(ew.h3$GS+ew.h3$JPM+ew.h3$AAPL+ew.h3$AMZN+ew.h3$DTE+ew.h3$AES)/6
 
 ew.h3$EWRet<-rbind(ew.h3$EWPort[1]-1,Delt(ew.h3$EWPort)[-1,])
 
@@ -494,7 +500,7 @@ ew.h4$DTE <-cumprod(ew.h4$DTE.Ret+1)
 ew.h4$AES <-cumprod(ew.h4$AES.Ret+1)
 ew.h4$AAPL <-cumprod(ew.h4$AAPL.Ret+1)
 ew.h4$AMZN <-cumprod(ew.h4$AMZN.Ret+1)
-ew.h4$EWPort<-(ew.h4$GS+ew.h4$JPM+ew.h4$AAPL+ew.h4$AMZN+ew.h4$DTE+ew.h4$AES)/4
+ew.h4$EWPort<-(ew.h4$GS+ew.h4$JPM+ew.h4$AAPL+ew.h4$AMZN+ew.h4$DTE+ew.h4$AES)/6
 
 ew.h4$EWRet<-rbind(ew.h4$EWPort[1]-1,Delt(ew.h4$EWPort)[-1,])
 
@@ -575,7 +581,7 @@ str(vwret)
 
 
 a)Construct a variance-covariance matrix
-```{r com, , warning=FALSE}
+```{r com, , echo=FALSE, message=FALSE, warning=FALSE}
 #Combining the two series
 
 AAPL.ret <-Delt(data.AAPL.Pandemic$AAPL.Adjusted)
@@ -631,52 +637,193 @@ library(xts)
 library(zoo)
 ```
 
+Equally Weighted portfolio
 
-
-```{r 2}
-library(Rglpk)
+```{r AAPLE, echo=FALSE, message=FALSE, warning=FALSE}
 library(slam)
 library(cccp)
 library(FRAPO)
-library(xts)
-index(data.AAPL.Pandemic)
-AAPL.test <- subset(data.AAPL.Pandemic, index(data.AAPL.Pandemic) >= "2020-07-01" & index(data.AAPL.Pandemic) < "2021-08-01")
-AAPL.test[c(1:3,nrow(AAPL.test)),]
-date<- index(AAPL.test) 
-OpeningPrice<-AAPL.test$AAPL.Open
-attr(OpeningPrice, 'time')<-date
-head(OpeningPrice)
-#Creating a variable that represent daily returns by using returnseries() (part of FRAPO package) function.
-#Variable is named as AAPLRet
-#The function “returnseries” from the FRAPO package is used to compute financial returns from prices or indexes.
-
-AAPLRet<-returnseries(OpeningPrice)
-summary(AAPLRet)
-attr(AAPLRet, 'time')<-date
-str(AAPLRet)
-```
-
-```{r GHD}
 library(ghyp)
 library(timeSeries)
 library(fBasics)
 library(timeDate)
 
-datets<-as.character(date)
-AAPLTimeS<-timeSeries(AAPLRet, charvec = datets)
-str(AAPLTimeS)
-head(AAPLTimeS)
+#Ew Portfolio
+EWPort<-(GS.Pandemic$Open+JPM.Pandemic$Open+AAPL.Pandemic$Open+AMZN.Pandemic$Open+DTE.Pandemic$Open+AES.Pandemic$Open)/6
 
-##plot the density function for the timeseries AAPLTimeS
-AAPL.ef<-density(AAPLTimeS, na.rm=TRUE)
-plot(AAPL.ef)
+
+date<- index(GS.Pandemic) 
+OpeningPrice<-EWPort
+attr(OpeningPrice, 'time')<-date
+#Creating a variable that represent daily returns by using returnseries() (part of FRAPO package) function.
+#Variable is named as EWPortRet
+#The function “returnseries” from the FRAPO package is used to compute financial returns from prices or indexes.
+EWPortRet<-returnseries(OpeningPrice)
+EWPortLoss <- -1* EWPortRet
+hist(EWPortLoss, breaks = 100)
+hist(EWPortRet, breaks = 100)
+
+attr(EWPortRet, 'time')<-date
+
+datets<-as.character(date)
+EWPortTimeS<-timeSeries(EWPortRet, charvec = datets)
+str(EWPortTimeS)
+
+##plot the density function for the timeseries EWPortTimeS
+EWPort.ef<-density(EWPortTimeS, na.rm=TRUE)
+plot(EWPort.ef)
 
 #Fit the Generalized Hyperbolic Distribution
-ghdfit<- fit.ghypuv(AAPLTimeS, symmetric =FALSE, control =list(maxit =1000), na.rm =TRUE)
+ghdfit<- fit.ghypuv(EWPortTimeS, symmetric =FALSE, control =list(maxit =1000), na.rm =TRUE)
 
-hypfit<-fit.hypuv(AAPLTimeS, symmetric =FALSE, control =list(maxit =1000),na.rm =TRUE)
+hypfit<-fit.hypuv(EWPortTimeS, symmetric =FALSE, control =list(maxit =1000),na.rm =TRUE)
 
 #Fit the Normal Inverse Gaussian Distribution
-nigfit<-fit.NIGuv(AAPLTimeS, symmetric =FALSE, control =list(maxit =1000), na.rm =TRUE)
+nigfit<-fit.NIGuv(EWPortTimeS, symmetric =FALSE, control =list(maxit =1000), na.rm =TRUE)
 
 ```
+
+
+
+
+
+
+
+
+
+
+Obtaining the density functions and plot for AAPL
+```{r sd EWPort, echo=FALSE, message=FALSE, warning=FALSE}
+ghddens.EWPort <-dghyp(EWPort.ef$x, ghdfit)
+hypdens.EWPort <-dghyp(EWPort.ef$x, hypfit)
+nigdens.EWPort <-dghyp(EWPort.ef$x, nigfit)
+nordens.EWPort <-dnorm(EWPort.ef$x, mean =mean(EWPortTimeS, na.rm=TRUE), sd =sd(c(EWPortTimeS[,1]), na.rm=TRUE))
+col.def <-c("black", "red", "blue", "green", "orange")
+plot(EWPort.ef, xlab ="", ylab =expression(f(x)), ylim =c(0, 0.35))
+lines(EWPort.ef$x, ghddens.EWPort, col ="red")
+lines(EWPort.ef$x, hypdens.EWPort, col ="blue")
+lines(EWPort.ef$x, nigdens.EWPort, col ="green")
+lines(EWPort.ef$x, nordens.EWPort, col ="orange")
+legend("topright",legend =c("empirical", "GHD", "HYP", "NIG", "NORM"),col =col.def, lty =1)
+```
+QQ Plot for EWPort
+```{r qq EWPort,echo=FALSE, message=FALSE, warning=FALSE}
+qqghyp(ghdfit, line =TRUE, ghyp.col ="red", plot.legend =FALSE,gaussian=FALSE, main ="", cex =0.8)
+qqghyp(hypfit, add =TRUE, ghyp.pch =2, ghyp.col ="blue",gaussian =FALSE, line=FALSE, cex =0.8)
+qqghyp(nigfit, add =TRUE, ghyp.pch =3, ghyp.col ="green",gaussian =FALSE, line =FALSE, cex =0.8)
+legend("topleft", legend =c("GHD", "HYP", "NIG"),col = col.def[-c(1,5)], pch =1:3)
+```
+Best fit Model
+#Use the function “lik.ratio.test” to perform a likelihood-ratio test on fitted generalized hyperbolic distribution objects of class mle.ghyp. The likelihood-ratio test can be used to check whether a special case of the generalized hyperbolic distribution is the “true” underlying distribution.
+#statistic: the value of the L-statistic.
+#p.value: the p-value for the test (the p-value is less than 0.05, then there is evidence against the null hypothesis)
+#df: the degrees of freedom for the L-statistic
+#H0: a boolean stating whether the null hypothesis is TRUE or FALSE (if TRUE there is no relationship between the data sets)
+```{r modelaaaa ,echo=FALSE, message=FALSE, warning=FALSE}
+AIC <-stepAIC.ghyp(EWPortTimeS, control =list(maxit =1000))
+head(AIC$fit.table)
+
+LRghdnig <-lik.ratio.test(ghdfit, nigfit)
+LRghdnig
+
+LRghdhyp <-lik.ratio.test(ghdfit, hypfit)
+```
+
+The VaR based on the normal distribution can be computed by providing the necessary estimates for the location and scale.
+The VaR values thus determined are compared to their empirical counterparts, which are determined by the quantile() function.
+
+```{r someeee,echo=FALSE, message=FALSE, warning=FALSE}
+p <-seq(0.001, 0.05, 0.001)
+ghd.VaR <-abs(qghyp(p, ghdfit))
+hyp.VaR <-abs(qghyp(p, hypfit))
+nig.VaR <-abs(qghyp(p, nigfit))
+nor.VaR <-abs(qnorm(p, mean =mean(EWPortTimeS, na.rm=TRUE), sd =sd(c(EWPortTimeS[,1]), na.rm =TRUE)))
+emp.VaR <-abs(quantile(x = EWPortTimeS, probs = p, na.rm=TRUE))
+
+plot(emp.VaR, type ="l", xlab ="", ylab ="VaR", axes =FALSE, ylim =range(c(hyp.VaR, nig.VaR, ghd.VaR, nor.VaR, emp.VaR)))
+box()
+axis(1, at =seq(along = p), labels =names(emp.VaR), tick =FALSE)
+axis(2, at =pretty(range(emp.VaR, ghd.VaR, hyp.VaR, nig.VaR,
+                         nor.VaR)))
+lines(seq(along = p), ghd.VaR, col ="red")
+lines(seq(along = p), hyp.VaR, col ="blue")
+lines(seq(along = p), nig.VaR, col ="green")
+lines(seq(along = p), nor.VaR, col ="orange")
+legend("topright",
+       legend =c("Empirical", "GHD", "HYP", "NIG", "Normal"),
+       col = col.def, lty =1)
+```
+
+
+Calculate and plot the Expected Shortfall (using all models)
+```{r es,echo=FALSE, message=FALSE, warning=FALSE}
+ghd.ES <-abs(ESghyp(p, ghdfit))
+hyp.ES <-abs(ESghyp(p, hypfit))
+nig.ES <-abs(ESghyp(p, nigfit))
+nor.ES <-abs(mean(EWPortTimeS, na.rm=TRUE) -sd(c(EWPortTimeS[, 1]),na.rm =TRUE)
+             *dnorm(qnorm(1-p)) /p)
+obs.p <-ceiling(p *length(EWPortTimeS))
+emp.ES <-sapply(obs.p, function(x) abs(mean(sort(c(EWPortTimeS))[1:x])))
+# Plot the ES
+plot(emp.ES, type ="l", xlab ="", ylab ="ES", axes =FALSE,ylim =range(c(hyp.ES, nig.ES, ghd.ES, nor.ES, emp.ES),na.rm =TRUE))
+box()
+axis(1, at =1:length(p), labels =names(emp.VaR), tick =FALSE)
+axis(2, at =pretty(range(emp.ES, ghd.ES, hyp.ES, nig.ES, nor.ES)))
+lines(1:length(p), ghd.ES, col ="red")
+lines(1:length(p), hyp.ES, col ="blue")
+lines(1:length(p), nig.ES, col ="green")
+lines(1:length(p), nor.ES, col ="orange")
+legend("topright",legend =c("Empirical", "GHD", "HYP", "NIG", "Normal"),col =
+col.def, lty =1)
+```
+
+Garch Model 
+```{r Model Fitting for equally Weighted portfolio, echo = TRUE}
+
+EWPort.AdjClose<-(GS.Pandemic$Adj.Close+JPM.Pandemic$Adj.Close+AAPL.Pandemic$Adj.Close+AMZN.Pandemic$Adj.Close+DTE.Pandemic$Adj.Close+AES.Pandemic$Adj.Close)/6
+
+EWPortReturn<-returnseries(EWPort.AdjClose)
+library(timeSeries)
+library('fGarch')
+
+date<-JPM$Date
+str(date)
+
+
+GETS<-timeSeries(EWPortReturn, charvec = date)
+GETS$Return <- GETS[-c(1)]
+head(GETS$Return)
+acf(GETS$Return, na.action = na.pass)
+pacf(GETS$Return, na.action = na.pass)
+
+acf(abs(GETS$Return), na.action = na.pass)
+pacf(abs(GETS$Return), na.action = na.pass)
+
+mean(GETS$Return, na.rm = TRUE)
+GETSComp <- removeNA(GETS)
+
+garchFi<-garchFit(~garch(1,1), data=GETSComp)
+
+
+a <- coef(garchFi)
+b<-formula(garchFi)
+c<-volatility(garchFi)
+plot(c)
+
+predict(garchFi, n.ahead =10)
+# with SD
+garchfi2<-garchFit(~garch(1,1), data=GETSComp, cond.dist = "std")
+sigma <-  as.numeric(predict(garchfi2, n.ahead = 1)[3])
+df <- as.numeric(coef(garchfi2)["shape"])
+rand<-rt(100000, df=df)
+hist(rand, breaks=100)
+quant<-qt(.01, df=df)
+a<-sigma*quant #VaR
+b<-max(tail(sort(rand, decreasing = T),1000))*sigma #VaR
+a/b
+
+d<-mean(tail(sort(rand, decreasing = T),1000))*sigma #ES
+head(d/c)
+
+```
+
