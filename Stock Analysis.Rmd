@@ -971,7 +971,7 @@ tangency.port
 ```
 
 Plot the Mean-Variance (MV) Efficient Frontier
-```{r 1d}
+```{r 1d , message=FALSE, warning=FALSE, error=FALSE}
 eff.frontier <-subset(tgt.port,tgt.port$tgt.ret>=minvar.port$tgt.ret)
 eff.frontier[c(1:3,nrow(eff.frontier)),]
 
@@ -987,3 +987,67 @@ points(x=minvar.port$tgt.sd,y=minvar.port$tgt.ret,pch=17,cex=3)
 points(x=tangency.port$tgt.sd,y=tangency.port$tgt.ret,pch=19,cex=3)
 points(x=eff.frontier$tgt.sd,y=eff.frontier$tgt.ret)
 ```
+Diversification Benefits
+```{r B, message=FALSE, warning=FALSE, error=FALSE}
+library(FRAPO)
+library(lattice)
+
+Idx <- interpNA(returns, method = "before")
+R <- returnseries(Idx, method = "discrete", trim = TRUE)
+V <- cov(R)
+head(Idx)
+# The allocations according to the four portfolio optimizations are then extracted by means of the Weights() method and assigned to the objects GMVw, MDPw, MTDw, and ERCw for the global-minimum variance, most-diversified, minimum tail-dependent, and equal-risk contributed solutions, respectively.
+```
+
+  1.The global-minimum variance portfolio.
+```{r B1, message=FALSE, warning=FALSE, error=FALSE}
+GMVw <- Weights(PGMV(R))
+```
+  2.The most diversified Portfolio,
+```{r B2, message=FALSE, warning=FALSE, error=FALSE}
+MDPw <- Weights(PMD(R))
+
+```
+  3.The equal-risk contributed Portfolio
+```{r B3, message=FALSE, warning=FALSE, error=FALSE}
+ERCw <- Weights(PERC(V))
+```
+  4.Minimum tail-dependent portfolio
+```{r B4, message=FALSE, warning=FALSE, error=FALSE}
+MTDw <- Weights(PMTD(R))
+
+```
+  
+```{r graphs , message=FALSE, warning=FALSE, error=FALSE}
+# The weights are then collected in the matrix object W. This object is then used in the call to the apply() function to determine the marginal risk contributions for each of the four optimal weight vectors.
+
+W <- cbind(GMVw, MDPw, MTDw, ERCw)
+MRC <- apply(W, 2, mrc, Sigma = V)
+rownames(MRC) <- colnames(Idx)
+
+colnames(MRC) <- c("GMV", "MDP", "MTD", "ERC")
+oldpar <- par(no.readonly = TRUE)
+
+par(mfrow = c(2, 2))
+dotchart(GMVw, xlim = c(0, 40), main = "GMV Allocation", pch = 19)
+dotchart(MDPw - GMVw, xlim = c(-20, 20), main = "MDP vs. GMV",
+         pch = 19)
+abline(v = 0, col = "blue")
+dotchart(MTDw - GMVw, xlim = c(-20, 20), main = "MTD vs. GMV", pch = 19)
+abline(v = 0, col = "blue")
+dotchart(ERCw - GMVw, xlim = c(-20, 20), main = "ERC vs. GMV",
+pch = 19)
+abline(v = 0, col = "blue")
+
+library(PerformanceAnalytics)
+Rdec <- R / 100
+Pret <- apply(W, 2, function(x) Rdec %*% x / 100)
+SD <- apply(Pret, 2, sd) * 100
+ES95 <- apply(Pret, 2, function(x)
+  abs(ES(R = x, method = "modified") * 100))
+## Summarising results
+Res <- rbind(SD, ES95)
+Res
+```
+  
+  
