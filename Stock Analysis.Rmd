@@ -40,8 +40,7 @@ Source: All the data has been sourced from yahoo finance and US Dept. of Treasur
 
 Data Cleansing and Loading
 ```{r section 1 Loading Data,echo=FALSE, message=FALSE, warning=FALSE}
-
-
+#Loading data
 GS <- read.csv("~/Documents/515/515-Project/data/GS.csv")
 JPM <- read.csv("~/Documents/515/515-Project/data/JPM.csv")
 DTE <- read.csv("~/Documents/515/515-Project/data/DTE.csv")
@@ -989,11 +988,16 @@ abline(v = 0, col = "blue")
 #Rdec
 Rdec <- R / 100
 Pret <- apply(W, 2, function(x) Rdec %*% x / 100)
-SD <- apply(Pret, 2, sd) * 100
-ES95 <- apply(Pret, 2, function(x)
-  abs(ES(R = x, method = "modified") * 100))
+SD <- apply(Pret, 2, sd) 
+ES95 <-
+  apply(Pret, 2, function(x)
+    abs(ES(R = x, method = "modified")))
+DR <- apply(W, 2, dr, Sigma = V)
+CR <- apply(W, 2, cr, Sigma = V)
+
 
 ## Summarising results
-Res <- rbind(SD, ES95)
+Res <- rbind(SD, ES95, DR, CR)
+
 Res
 ```
