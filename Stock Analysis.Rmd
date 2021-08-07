@@ -825,5 +825,165 @@ a/b
 d<-mean(tail(sort(rand, decreasing = T),1000))*sigma #ES
 head(d/c)
 
+
+
+
+```
+Markvitz Optimization 
+
+```{r optimization, message=FALSE, warning=FALSE, error=FALSE}
+library(xts)
+library(quantmod)
+library(readxl)
+
+
+JPM.Monthly<-to.monthly(data.JPM.Pandemic)
+GS.Monthly<-to.monthly(data.GS.Pandemic)
+DTE.Monthly<-to.monthly(data.DTE.Pandemic)
+AES.Monthly<-to.monthly(data.AES.Pandemic)
+AAPL.Monthly<-to.monthly(data.AAPL.Pandemic)
+AMZN.Monthly<-to.monthly(data.AMZN.Pandemic)
+
+AMZN.monthly.ret <-Delt(AMZN.Monthly$data.AMZN.Pandemic.Adjusted)
+names(AMZN.monthly.ret)<-paste("AMZN.ret.monthly")
+AMZN.monthly.ret[c(1:3,nrow(AMZN.monthly.ret))]
+
+JPM.monthly.ret <-Delt(JPM.Monthly$data.JPM.Pandemic.Adjusted)
+names(JPM.monthly.ret)<-paste("JPM.ret.monthly")
+JPM.monthly.ret[c(1:3,nrow(JPM.monthly.ret))]
+
+GS.monthly.ret <-Delt(GS.Monthly$data.GS.Pandemic.Adjusted)
+names(GS.monthly.ret)<-paste("GS.ret.monthly")
+GS.monthly.ret[c(1:3,nrow(GS.monthly.ret))]
+
+DTE.monthly.ret <-Delt(DTE.Monthly$data.DTE.Pandemic.Adjusted)
+names(DTE.monthly.ret)<-paste("DTE.ret.monthly")
+DTE.monthly.ret[c(1:3,nrow(DTE.monthly.ret))]
+
+AES.monthly.ret <-Delt(AES.Monthly$data.AES.Pandemic.Adjusted)
+names(AES.monthly.ret)<-paste("AES.ret.monthly")
+AES.monthly.ret[c(1:3,nrow(AES.monthly.ret))]
+
+AAPL.monthly.ret <-Delt(AAPL.Monthly$data.AAPL.Pandemic.Adjusted)
+names(AAPL.monthly.ret)<-paste("AAPL.ret.monthly")
+AAPL.monthly.ret[c(1:3,nrow(AAPL.monthly.ret))]
+
+
 ```
 
+
+
+```{r combining monthly return series,message=FALSE, warning=FALSE, error=FALSE}
+options(digits=3)
+returns <-
+cbind(JPM.monthly.ret[-1,],GS.monthly.ret[-1,],AES.monthly.ret[-1,],DTE.monthly.ret[-1,],AAPL.monthly.ret[-1,],AMZN.monthly.ret[-1,])
+names(returns) <-
+paste(c("JPM.Ret","GS.Ret","AES.Ret","DTE.Ret","AAPL.Ret","AMZN.Ret"))
+returns[c(1:3,nrow(returns)),]
+#Converting data to matrix
+mat.ret<-matrix(returns,nrow(returns))
+mat.ret [1:3,]
+
+colnames(mat.ret) <- c("JPM","GS","AES","DTE","AAPL","AMZN")
+head(mat.ret)
+VCOV <- cov(mat.ret)
+VCOV
+
+```
+
+```{r 1b,message=FALSE, warning=FALSE, error=FALSE}
+library(quadprog)
+avg.ret <- matrix(apply(mat.ret,2,mean))
+colnames(avg.ret) <- paste("Avg.Ret")
+rownames(avg.ret) <-
+paste(c("JPM","GS","AES","DTE","AAPL","AMZN"))
+avg.ret
+
+#set the smaller of the average returns as minimum return min.ret and the larger of the average returns as the max return max.ret.
+min.ret <- min(avg.ret)
+min.ret
+
+max.ret <- max(avg.ret)
+max.ret
+
+# Create a sequence that begins with min.ret and ends with max.ret with 100 increments in between.
+
+increments = 100
+tgt.ret <- seq(min.ret,max.ret,length=increments)
+head(tgt.ret)
+tail(tgt.ret)
+
+#Construct Dummy Portfolio Standard Deviation Vector
+tgt.sd <- rep(0,length=increments)
+tgt.sd
+wgt <- matrix(0,nrow=increments,ncol=length(avg.ret))
+
+head(wgt)
+
+tail(wgt)
+
+#Run the quadprog Optimizer
+
+for (i in 1:increments) {
+Dmat <- 2*VCOV
+dvec <- c(rep(0,length(avg.ret)))
+Amat <- cbind(rep(1,length(avg.ret)),avg.ret,diag(1,nrow=ncol(returns))) 
+bvec <- c(1,tgt.ret[i],rep(0,ncol(returns)))
+soln <- solve.QP(Dmat,dvec,Amat,bvec=bvec)
+tgt.sd[i] <- sqrt(soln$value)
+wgt[i,] <- soln$solution}
+
+head(tgt.sd)
+tail(tgt.sd)
+options(scipen=100)
+head(wgt)
+
+# Overwrite the first entries, thaty are not zero due to a calculation error.Also rename the column headers.
+colnames(wgt) <-
+paste(c("wgt.JPM","wgt.GS","wgt.AES","wgt.DTE","wgt.AAPL","wgt.AMZN"))
+
+
+
+wgt[1,1] <- 0
+wgt[nrow(wgt),2] <- 0
+head(wgt)
+
+# Combine Portfolio Returns, Portfolio Standard Deviations, and PortfolioWeights
+tgt.port <- data.frame(cbind(tgt.ret,tgt.sd,wgt))
+head(tgt.port)
+
+minvar.port <-subset(tgt.port,tgt.port$tgt.sd==min(tgt.port$tgt.sd))
+head(minvar.port)
+```
+
+
+```{r tangency portfolio, message=FALSE, warning=FALSE, error=FALSE}
+#3-month treasury as of end of Dec-31-2020 was 0.09%
+riskfree = .0009/12
+tgt.port$Sharpe <- (tgt.port$tgt.ret-riskfree)/tgt.port$tgt.sd
+head(tgt.port)
+
+
+# Identify the portfolio with the highest Sharpe Ratio and that is the tangency portfolio.
+
+tangency.port <-subset(tgt.port,tgt.port$Sharpe==max(tgt.port$Sharpe))
+tangency.port
+```
+
+Plot the Mean-Variance (MV) Efficient Frontier
+```{r 1d}
+eff.frontier <-subset(tgt.port,tgt.port$tgt.ret>=minvar.port$tgt.ret)
+eff.frontier[c(1:3,nrow(eff.frontier)),]
+
+plot(x=tgt.sd,
+     y=tgt.ret,
+     col="green",
+     xlab="Portfolio Risk",
+     ylab="Portfolio Return",
+    main="Mean-Variance(MV) Efficient Frontier of Portfolio- Six
+     Securities Based on the Quadratic Programming Approach")
+abline(h=0,lty=1)
+points(x=minvar.port$tgt.sd,y=minvar.port$tgt.ret,pch=17,cex=3)
+points(x=tangency.port$tgt.sd,y=tangency.port$tgt.ret,pch=19,cex=3)
+points(x=eff.frontier$tgt.sd,y=eff.frontier$tgt.ret)
+```
